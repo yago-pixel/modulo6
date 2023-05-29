@@ -1,31 +1,39 @@
-// Replace 'YOUR_API_KEY' with your actual API key
 const apiKey = 'YOUR_API_KEY';
+const location = 'New York'; // Replace with the desired location
 
-// Function to fetch weather data from the API
 async function getWeatherData() {
-  const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=New York`);
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch(`https://api.weatherbit.io/v2.0/current?city=${location}&key=${apiKey}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error fetching weather data:', error);
+    throw error;
+  }
 }
 
-// Function to display weather data on the dashboard
 function displayWeatherData(weatherData) {
   const weatherContainer = document.getElementById('weather-container');
+  weatherContainer.innerHTML = '';
 
-  const location = weatherData.location.name;
-  const temperature = weatherData.current.temp_c;
-  const condition = weatherData.current.condition.text;
+  const locationName = weatherData.data[0].city_name;
+  const temperature = weatherData.data[0].temp;
+  const description = weatherData.data[0].weather.description;
 
-  const weatherHTML = `
-    <h2>${location}</h2>
-    <p>Temperature: ${temperature}°C</p>
-    <p>Condition: ${condition}</p>
-  `;
+  const locationElement = document.createElement('h2');
+  locationElement.textContent = locationName;
 
-  weatherContainer.innerHTML = weatherHTML;
+  const temperatureElement = document.createElement('p');
+  temperatureElement.textContent = `Temperature: ${temperature}°C`;
+
+  const descriptionElement = document.createElement('p');
+  descriptionElement.textContent = `Description: ${description}`;
+
+  weatherContainer.appendChild(locationElement);
+  weatherContainer.appendChild(temperatureElement);
+  weatherContainer.appendChild(descriptionElement);
 }
 
-// Fetch weather data and display it
 getWeatherData()
   .then(displayWeatherData)
   .catch(error => console.log(error));
