@@ -1,65 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Professional Website</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEATHER APP</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-  <header>
-    <nav>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <section id="home">
-    <div class="hero">
-      <h1>Welcome to Our Professional Website</h1>
-      <p>Delivering excellence in design and functionality.</p>
-      <a href="#contact" class="cta-button">Get in touch</a>
+    <div class="header">
+        <h1>WEATHER APP</h1>
+        <div>
+            <input type="text" name="" id="input" placeholder="Enter city name">
+            <button id="search" onclick="searchByCity()">Search</button></input>
+        </div>
     </div>
-  </section>
 
-  <section id="about">
-    <div class="content">
-      <h2>About Us</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus in feugiat velit. Donec rutrum, purus id iaculis dictum, lorem nunc faucibus turpis, vitae consequat dolor nisi in libero.</p>
+    <main>        
+        <div class="weather">
+            <h2 id="city">Delhi,IN</h2>
+            <div class="temp-box">
+                <img src="/weathericon.png" alt="" id="img">
+                <p id="temperature">26 °C</p>
+            </div>
+            <span id="clouds">Broken Clouds</span>
+        </div>
+        <div class="divider1"></div>
+
+        <div class="forecstH">
+            <p class="cast-header">Upcoming forecast</p>
+            <div class="templist">
+
+                <div class="next">
+                    <div>
+                        <p class="time">8:30 PM</p>
+                        <p>29 °C / 29 °C</p>
+                    </div>
+                    <p class="desc">Light Rain</p>
+                </div>
+
+                <div class="next">
+                    <div>
+                        <p class="time">8:30 PM</p>
+                        <p>29 °C / 29 °C</p>
+                    </div>
+                    <p class="desc">Light Rain</p>
+                </div>
+
+                <div class="next">
+                    <div>
+                        <p class="time">8:30 PM</p>
+                        <p>29 °C / 29 °C</p>
+                    </div>
+                    <p class="desc">Light Rain</p>
+                </div>
+
+                <div class="next">
+                    <div>
+                        <p class="time">8:30 PM</p>
+                        <p>29 °C / 29 °C</p>
+                    </div>
+                    <p class="desc">Light Rain</p>
+                </div>
+
+                <div class="next">
+                    <div>
+                        <p class="time">8:30 PM</p>
+                        <p>29 °C / 29 °C</p>
+                    </div>
+                    <p class="desc">Light Rain</p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <div class="forecstD">
+        <div class="divider2"></div>
+        <p class="cast-header"> Next 4 days forecast</p>
+        <div class="weekF">
+
+            <div class="dayF">
+                <p class="date">Sun Jul 03 2022</p>
+                <p>31 °C / 31 °C</p>
+                <p class="desc">Overcast Clouds</p>
+            </div>
+
+            <div class="dayF">
+                <p class="date">Sun Jul 03 2022</p>
+                <p>31 °C / 31 °C</p>
+                <p class="desc">Overcast Clouds</p>
+            </div>
+
+            <div class="dayF">
+                <p class="date">Sun Jul 03 2022</p>
+                <p>31 °C / 31 °C</p>
+                <p class="desc">Overcast Clouds</p>
+            </div>
+
+            <div class="dayF">
+                <p class="date">Sun Jul 03 2022</p>
+                <p>31 °C / 31 °C</p>
+                <p class="desc">Overcast Clouds</p>
+            </div>
+        </div>
     </div>
-  </section>
-
-  <section id="services">
-    <div class="content">
-      <h2>Our Services</h2>
-      <ul>
-        <li>Web Design</li>
-        <li>Graphic Design</li>
-        <li>Mobile App Development</li>
-        <li>SEO and Digital Marketing</li>
-      </ul>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="content">
-      <h2>Contact Us</h2>
-      <p>Feel free to reach out to us for any inquiries or project collaborations.</p>
-      <form>
-        <input type="text" placeholder="Your Name">
-        <input type="email" placeholder="Your Email">
-        <textarea placeholder="Your Message"></textarea>
-        <button type="submit">Send Message</button>
-      </form>
-    </div>
-  </section>
-
-  <footer>
-    <p>&copy; 2023 Your Company. All rights reserved.</p>
-  </footer>
-
-  <script src="script.js"></script>
+    <script src="/weather.js"></script>
 </body>
 </html>
