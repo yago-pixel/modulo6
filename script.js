@@ -24,15 +24,22 @@ window.addEventListener("load", () => {
 
 function searchByCity() {
     var place = document.getElementById('input').value;
-    var urlsearch = `http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=1cf59d1cd3625781b5164be61898e9d9`;
-
-    fetch(urlsearch).then((res) => {
+    var data = fetchCoordinates(place);
+    console.log(data);
+    var apiURL = `http://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=5&appid=1cf59d1cd3625781b5164be61898e9d9`;
+    fetch(apiURL).then(function(res){
         return res.json();
-    }).then((data) => {
+    }).then(function (data){
         console.log(data);
-        weatherReport(data);
-    })
+        var urlsearch = `https://api.openweathermap.org/data/2.5/forecast?lat=${data.[0].lat}&lon=${data[0].lon}&exclude=minutely,hourly,alerts&units=metric&appid=${APIkey}`;
+        fetch(urlsearch).then((res) => {
+            return res.json();
+        }).then((data) => {
+            console.log(data);
+            weatherReport(data);
+        })
     document.getElementById('input').value = '';
+    })
 }
 
 function weatherReport(data) {
