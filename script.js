@@ -1,4 +1,6 @@
 const apikey = "1cf59d1cd3625781b5164be61898e9d9";
+const button = document.getElementById("search");
+
 window.addEventListener("load", () => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -22,23 +24,29 @@ window.addEventListener("load", () => {
 })
 
 
+var lat;
+var lon;
+
 function searchByCity() {
     var place = document.getElementById('input').value;
-    var data = fetchCoordinates(place);
-    console.log(data);
+    // var data = fetchCoordinates(place);
+    // console.log(data);
     var apiURL = `http://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=5&appid=1cf59d1cd3625781b5164be61898e9d9`;
     fetch(apiURL).then(function(res){
+        
         return res.json();
     }).then(function (data){
         console.log(data);
-        var urlsearch = `https://api.openweathermap.org/data/2.5/forecast?lat=${data.[0].lat}&lon=${data[0].lon}&exclude=minutely,hourly,alerts&units=metric&appid=${APIkey}`;
+         lat = data[0].lat;
+         lon = data[0].lon
+        var urlsearch = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&appid=${apikey}`;
         fetch(urlsearch).then((res) => {
             return res.json();
         }).then((data) => {
             console.log(data);
-            weatherReport(data);
+            //weatherReport(data);
         })
-    document.getElementById('input').value = '';
+    //document.getElementById('input').value = '';
     })
 }
 
@@ -125,3 +133,5 @@ function dayForecast(forecast) {
         document.querySelector('.weekF').appendChild(div)
     }
 } 
+
+button.addEventListener("click", searchByCity);
