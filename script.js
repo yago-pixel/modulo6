@@ -6,7 +6,7 @@ window.addEventListener("load", () => {
         navigator.geolocation.getCurrentPosition((position) => {
             let lon = position.coords.longitude;
             let lat = position.coords.latitude;
-            const url = `http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=1cf59d1cd3625781b5164be61898e9d9`;
+            const url = `https://api.openweathermap.org/data/2.5/forecast?id=524901&appid=1cf59d1cd3625781b5164be61898e9d9`;
 
 
             fetch(url).then((res) => {
@@ -31,19 +31,26 @@ function searchByCity() {
     var place = document.getElementById('input').value;
     // var data = fetchCoordinates(place);
     // console.log(data);
-    var apiURL = `http://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=5&appid=1cf59d1cd3625781b5164be61898e9d9`;
+    var apiURL = `https://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=5&appid=1cf59d1cd3625781b5164be61898e9d9`;
     fetch(apiURL).then(function(res){
         
         return res.json();
     }).then(function (data){
-        console.log(data);
+        //console.log(data);
          lat = data[0].lat;
-         lon = data[0].lon
-        var urlsearch = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&appid=${apikey}`;
+         lon = data[0].lon;
+       //  var urlsearch = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=3&exclude=minutely,hourly,alerts&units=metric&appid=${apikey}`;
+         var urlsearch = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apikey}`;
         fetch(urlsearch).then((res) => {
             return res.json();
         }).then((data) => {
             console.log(data);
+          //  var jsonData = JSON.parse(data.json());
+            document.querySelector("#city").textContent = data.name;
+            document.querySelector("#temperature").textContent = data.main.temp.toFixed(0) + "C";
+            document.querySelector("#clouds").textContent = data.weather[0].description;
+            document.querySelector("#currentweatherimg").src = "https://openweathermap.org/img/wn/"+data.weather[0].icon+"@2x.png";
+
             //weatherReport(data);
         })
     //document.getElementById('input').value = '';
@@ -52,7 +59,7 @@ function searchByCity() {
 
 function weatherReport(data) {
 
-    var urlcast = `http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=1cf59d1cd3625781b5164be61898e9d9`;
+    var urlcast = `https://api.openweathermap.org/data/2.5/forecast?id=524901&appid=1cf59d1cd3625781b5164be61898e9d9`;
 
     fetch(urlcast).then((res) => {
         return res.json();
