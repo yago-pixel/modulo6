@@ -57,7 +57,7 @@ function searchByCity() {
                 console.log(data)
                 const fiveDayfilter=data.list.filter(entry=>entry.dt_txt.includes('03:00:00'))
                 console.log(fiveDayfilter);
-                
+
 // document.querySelector("#day1").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
 //document.querySelector("#day1").textContent = fiveDayfilter.weather[0].description;
 //document.querySelector("#day1").textContent = fiveDayfilter.main.feels_like. + "C";
