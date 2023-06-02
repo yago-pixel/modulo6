@@ -39,7 +39,7 @@ function searchByCity() {
         //console.log(data);
          lat = data[0].lat;
          lon = data[0].lon;
-       //  var urlsearch = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=3&exclude=minutely,hourly,alerts&units=metric&appid=${apikey}`;
+       // var urlsearch = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=3&exclude=minutely,hourly,alerts&units=metric&appid=${apikey}`;
          var urlsearch = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apikey}`;
         fetch(urlsearch).then((res) => {
             return res.json();
@@ -56,9 +56,30 @@ function searchByCity() {
             }).then((data)=>{
                 console.log(data)
                 const fiveDayfilter=data.list.filter(entry=>entry.dt_txt.includes('03:00:00'))
-                console.log(fiveDayfilter)
-                //loop through the fiveDayfilter array and change the vales on your html just luke you did 
+                console.log(fiveDayfilter);
                 
+// document.querySelector("#day1").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
+//document.querySelector("#day1").textContent = fiveDayfilter.weather[0].description;
+//document.querySelector("#day1").textContent = fiveDayfilter.main.feels_like. + "C";
+
+// document.querySelector("#day2").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
+//document.querySelector("#day2").textContent = fiveDayfilter.weather[0].description;
+//document.querySelector("#day2").textContent = fiveDayfilter.main.feels_like. + "C";
+
+// document.querySelector("#day3").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
+//document.querySelector("#day3").textContent = fiveDayfilter.weather[0].description;
+//document.querySelector("#day3").textContent = fiveDayfilter.main.feels_like. + "C";
+
+// document.querySelector("#day4").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
+//document.querySelector("#day4").textContent = fiveDayfilter.weather[0].description;
+//document.querySelector("#day4").textContent = fiveDayfilter.main.feels_like. + "C";
+
+// document.querySelector("#day5").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
+//document.querySelector("#day5").textContent = fiveDayfilter.weather[0].description;
+//document.querySelector("#day5").textContent = fiveDayfilter.main.feels_like. + "C";
+
+            
+
             })
 
             // weatherReport(data);
