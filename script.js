@@ -1,175 +1,198 @@
-const apikey = "1cf59d1cd3625781b5164be61898e9d9";
-const button = document.getElementById("search");
+var searchHistory = $('.search-history');
+var submitButton = $('form');
+var cityInput = $('#citySearch');
+var myApiKey = 'f49ee689d4dabda3b9e19b6dac6d6729';
+var currentWeatherDiv = $('.current-weather');
+var forecastHeading = $('.forecast-heading');
+var fiveDayForecastDiv = $('.five-day-forecast');
 
-window.addEventListener("load", () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-            let lon = position.coords.longitude;
-            let lat = position.coords.latitude;
-            const url = `https://api.openweathermap.org/data/2.5/forecast?id=524901&appid=1cf59d1cd3625781b5164be61898e9d9`;
+// Saves searched cities in the localstorage
+function saveCities(event) { 
+    event.preventDefault();
+    var cityValue = cityInput.val().trim();
 
 
-            fetch(url).then((res) => {
-                return res.json();
-            }).then((data) => {
-                console.log(data);
-                console.log(new Date().getTime())
-                var dat = new Date(data.dt)
-                console.log(dat.toLocaleString(undefined, 'Asia/Kolkata'))
-                console.log(new Date().getMinutes())
-                weatherReport(data);
+    if(cityValue.trim() === "") {
+        window.alert("Please provide a valid cityname!");
+    } else {
+        // use JSON to store citys in the storesCities
+        var storedCities = JSON.parse(localStorage.getItem('cities')) || [];
+        storedCities.push(cityValue);
+        localStorage.setItem('cities', JSON.stringify(storedCities));
+
+
+
+        // renderSearchHistory and fetch current and future weather
+        renderSearchHistory();
+        fetchWeatherForecast(cityValue);
+        fiveDayForecast(cityValue);
+        // clear cityInput field
+        cityInput.val('');
+    };
+};
+
+    // fetch current weather 
+    function fetchWeatherForecast(city){
+    // construct URL with given parameters and cityInput
+    var geoCodeUrl ='https://api.openweathermap.org/geo/1.0/direct';
+    var geoCodeApi = geoCodeUrl+'?q='+city+'&limit=1&appid='+myApiKey;
+        fetch(geoCodeApi)
+            .then(function (response) {
+            return response.json();
             })
-        })
-    }
-})
+            .then(function (data){
+            // get latitude and longtitude from the geocodingAPI response
+            var latitude = data[0].lat;
+            var longtitude = data[0].lon;
+
+            // use that data for the forecastApi to get the data based on the city input
+            var forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast';
+            var forecastApi = forecastUrl+'?lat='+latitude+'&lon='+longtitude+'&appid='+myApiKey;
+
+            fetch(forecastApi)
+                .then(function (response) {
+                return response.json(); 
+                })
+                .then(function (data) {
+                    // display current date
+                    var date = dayjs().format('M/D/YYYY');
+                    // just current weather, which is why we take the first data from the datalist array
+                    var forecast = data.list[0];
+               
+                        // get pieces of data, that I want for my weather dashboard 
+                        var name = data.city.name; 
+
+                        var temperature = forecast.main.temp;
+                        var windspeed = forecast.wind.speed;
+                        var humidity = forecast.main.humidity;
+                        var weatherCondition = forecast.weather[0].icon;
+                        var weatherIconUrl = 'https://openweathermap.org/img/w/' + weatherCondition + '.png';
+
+                        // converts kelvin into celsius
+                        var celsius = Math.round(temperature - 273.15);
+
+                        console.log(data);
+
+                        // clear current weather and five day forecast
+                        currentWeatherDiv.empty();
+                        fiveDayForecastDiv.empty();
+
+                        // construct HTML with the fetched data for the current weather and append it to the current weatherDiv
+                        var currentWeatherHTML = $('<h2>'+ name + ' ' + '(' + date + ')' + '<img src="' + weatherIconUrl + '" alt="Weather Icon">' + '</h2>' + '<br>' +
+                        '<p>Temp: '+ celsius + '°C</p>' + '<br>' +
+                        '<p>Wind: '+ windspeed + ' MPH</p>' + '<br>' + 
+                        '<p>Humidity: '+ humidity + ' %</p>');
+                        currentWeatherDiv.addClass('current-weather-style');
+                        currentWeatherDiv.append(currentWeatherHTML);
+
+                        forecastHeading.text("5-Day Forecast:");
+                    });
+                })
+                
+                // catch, in case of error and display error in the console
+                .catch(function(error){
+                    window.alert('Error:', error);
+                });
+        };
 
 
-var lat;
-var lon;
+        // nearly the same functionality as current weather forecast
+        function fiveDayForecast(city) {
+            var geoCodeUrl ='https://api.openweathermap.org/geo/1.0/direct';
+            var geoCodeApi = geoCodeUrl+'?q='+city+'&limit=1&appid='+myApiKey;
+                fetch(geoCodeApi)
+                    .then(function (response) {
+                    return response.json();
+                    })
+                    .then(function (data){
+                    // get latitude and longtitude from the geocodingAPI response
+                    var latitude = data[0].lat;
+                    var longtitude = data[0].lon;
 
-function searchByCity() {
-    var place = document.getElementById('input').value;
-    // var data = fetchCoordinates(place);
-    // console.log(data);
-    var apiURL = `https://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=5&appid=1cf59d1cd3625781b5164be61898e9d9`;
-    fetch(apiURL).then(function(res){
+                    var forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast';
+                    var forecastApi = forecastUrl+'?lat='+latitude+'&lon='+longtitude+'&appid='+myApiKey;
+
+                    fetch(forecastApi)
+                        .then(function (response) {
+                        return response.json(); 
+                        })
+                        .then(function (data) {
+                            
+                            var forecastList= data.list;
+                      
+                            // for loop to iterate through the forecastList
+                            for (var i = 1; i < forecastList.length; i++) {
+                                // condition that the dt_txt time equals 12 pm
+                                if(forecastList[i].dt_txt.slice(11,13) == 12) {
+                                    // dt_txt date should be displayed on each forecastListItem
+                                    var date = dayjs(forecastList[i].dt_txt).format('M/D/YYYY');
+                                    var temperature = forecastList[i].main.temp;
+                                    var windspeed = forecastList[i].wind.speed;
+                                    var humidity = forecastList[i].main.humidity;
+                                    var weatherCondition = forecastList[i].weather[0].icon;
+                                    var weatherIconUrl = 'https://openweathermap.org/img/w/' + weatherCondition + '.png';
+    
+                                    var celsius = Math.round(temperature - 273.15);
+    
+                                    console.log(forecastList[i]);
+    
+                                    // construct the forecastItemHtml, add style and append it to the fiveDayForecastDiv
+                                    var forecastItemHtml = $('<div>' + '<h3>'+ ' ' + date +  '</h3>' + '<br>' +
+                                    '<img src="' + weatherIconUrl + '" alt="Weather Icon">' + '<br>' +
+                                    '<p>Temp: '+ celsius + '°C</p>' + '<br>' +
+                                    '<p>Wind: '+ windspeed + ' MPH</p>' + '<br>' + 
+                                    '<p>Humidity: '+ humidity + ' %</p>' + '</div>');
+                                    forecastItemHtml.addClass('forecast-style');
+                                    fiveDayForecastDiv.append(forecastItemHtml);  
+                                }
+                                   
+                            };
+                              
+                            
+                        })
+
+                        .catch(function(error){
+                            window.alert('Error:', error);
+                        });
+                    });
+        };
         
-        return res.json();
-    }).then(function (data){
-        //console.log(data);
-         lat = data[0].lat;
-         lon = data[0].lon;
-       // var urlsearch = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=3&exclude=minutely,hourly,alerts&units=metric&appid=${apikey}`;
-         var urlsearch = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apikey}`;
-        fetch(urlsearch).then((res) => {
-            return res.json();
-        }).then((data) => {
-            console.log(data);
-          //  var jsonData = JSON.parse(data.json());
-            document.querySelector("#city").textContent = data.name;
-            document.querySelector("#temperature").textContent = data.main.temp.toFixed(0) + "C";
-            document.querySelector("#clouds").textContent = data.weather[0].description;
-            document.querySelector("#currentweatherimg").src = "https://openweathermap.org/img/wn/"+data.weather[0].icon+"@2x.png";
-            var urlsearch5days = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&appid=${apikey}`;
-            fetch(urlsearch5days).then((res)=>{
-                return res.json()
-            }).then((data)=>{
-                console.log(data)
-                const fiveDayfilter=data.list.filter(entry=>entry.dt_txt.includes('03:00:00'))
-                console.log(fiveDayfilter);
 
-// document.querySelector("#day1").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
-//document.querySelector("#day1").textContent = fiveDayfilter.weather[0].description;
-//document.querySelector("#day1").textContent = fiveDayfilter.main.feels_like. + "C";
+       
+    
 
-// document.querySelector("#day2").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
-//document.querySelector("#day2").textContent = fiveDayfilter.weather[0].description;
-//document.querySelector("#day2").textContent = fiveDayfilter.main.feels_like. + "C";
 
-// document.querySelector("#day3").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
-//document.querySelector("#day3").textContent = fiveDayfilter.weather[0].description;
-//document.querySelector("#day3").textContent = fiveDayfilter.main.feels_like. + "C";
 
-// document.querySelector("#day4").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
-//document.querySelector("#day4").textContent = fiveDayfilter.weather[0].description;
-//document.querySelector("#day4").textContent = fiveDayfilter.main.feels_like. + "C";
-
-// document.querySelector("#day5").textContent = fiveDayfilter.main.temp.toFixed(0) + "C";
-//document.querySelector("#day5").textContent = fiveDayfilter.weather[0].description;
-//document.querySelector("#day5").textContent = fiveDayfilter.main.feels_like. + "C";
-
+        // renders the Search-history in form of buttons under the form
+        function renderSearchHistory() {
+            // empty, so it won't double the elements from the localStorage
+            searchHistory.empty();
+            var storedCities = JSON.parse(localStorage.getItem('cities')) || [];
+            // iterate through each element in the localStorage and display it as a button inside a ul
+            storedCities.forEach(function(city) {
+                var savedCity = $('<li>');
+                var savedCityButton = $('<button>');
             
+                // append the cityInput text and style 
+                savedCityButton.text(city);
+                savedCityButton.addClass('btn btn-secondary');
 
-            })
+                // function that listens to click on Buttons in the SearchHistory
+                savedCityButton.on('click', function() {
+                    fetchWeatherForecast(city);
+                    fiveDayForecast(city);
+                })
+            
+                // append the buttons in the searchHistory
+                savedCity.append(savedCityButton);
+                searchHistory.append(savedCity);
 
-            // weatherReport(data);
-        })
-    //document.getElementById('input').value = '';
-    })
-}
+            });
+        
+        };
 
-function weatherReport(data) {
 
-    var urlcast = `https://api.openweathermap.org/data/2.5/forecast?id=524901&appid=1cf59d1cd3625781b5164be61898e9d9`;
-
-    fetch(urlcast).then((res) => {
-        return res.json();
-    }).then((forecast) => {
-        console.log(forecast);
-        // hourForecast(forecast);
-        dayForecast(forecast)
-
-        // console.log(data);
-        // document.getElementById('city').innerText = data.name + ', ' + data.sys.country;
-        // console.log(data.name, data.sys.country);
-
-        // console.log(Math.floor(data.main.temp - 273));
-        // document.getElementById('temperature').innerText = Math.floor(data.main.temp - 273) + ' °C';
-
-        // document.getElementById('clouds').innerText = data.weather[0].description;
-        // console.log(data.weather[0].description)
-
-        // let icon1 = data.weather[0].icon;
-        // let iconurl = "http://api.openweathermap.org/img/w/" + icon1 + ".png";
-        // document.getElementById('img').src = iconurl
-    })
-
-}
-
-function hourForecast(forecast) {
-    document.querySelector('.templist').innerHTML = ''
-    for (let i = 0; i < 5; i++) {
-
-        var date = new Date(forecast.list[i].dt * 1000)
-        console.log((date.toLocaleTimeString(undefined, 'Asia/Kolkata')).replace(':00', ''))
-
-        let hourR = document.createElement('div');
-        hourR.setAttribute('class', 'next');
-
-        let div = document.createElement('div');
-        let time = document.createElement('p');
-        time.setAttribute('class', 'time')
-        time.innerText = (date.toLocaleTimeString(undefined, 'Asia/Kolkata')).replace(':00', '');
-
-        let temp = document.createElement('p');
-        temp.innerText = Math.floor((forecast.list[i].main.temp_max - 273)) + ' °C' + ' / ' + Math.floor((forecast.list[i].main.temp_min - 273)) + ' °C';
-
-        div.appendChild(time)
-        div.appendChild(temp)
-
-        let desc = document.createElement('p');
-        desc.setAttribute('class', 'desc')
-        desc.innerText = forecast.list[i].weather[0].description;
-
-        hourR.appendChild(div);
-        hourR.appendChild(desc)
-        document.querySelector('.templist').appendChild(hourR);
-    }
-}
-
-function dayForecast(forecast) {
-    document.querySelector('.weekF').innerHTML = ''
-    for (let i = 8; i < forecast.list.length; i += 8) {
-        console.log(forecast.list[i]);
-        let div = document.createElement('div');
-        div.setAttribute('class', 'dayF');
-
-        let day = document.createElement('p');
-        day.setAttribute('class', 'date')
-        day.innerText = new Date(forecast.list[i].dt * 1000).toDateString(undefined, 'Asia/Kolkata');
-        div.appendChild(day);
-
-        let temp = document.createElement('p');
-        temp.innerText = Math.floor((forecast.list[i].main.temp_max - 273)) + ' °C' + ' / ' + Math.floor((forecast.list[i].main.temp_min - 273)) + ' °C';
-        div.appendChild(temp)
-
-        let description = document.createElement('p');
-        description.setAttribute('class', 'desc')
-        description.innerText = forecast.list[i].weather[0].description;
-        div.appendChild(description);
-
-        document.querySelector('.weekF').appendChild(div)
-    }
-} 
-
-button.addEventListener("click", searchByCity);
+// submit eventListener that saves cities and executes the rest of the functions with the saveCities function
+submitButton.on("submit", saveCities);
+// when document loaded it renders the searchHistory
+$(document).ready(renderSearchHistory);
