@@ -6,7 +6,7 @@ Welcome to the weather dashboard app. Here, you can see the current weather cond
 This project is here for anybody, who wants to quickly see the weather, to plan their day accordingly.
 It is easy to use and it helped me understand on how to integrate server-side apis in a dynamic webpage with html, css and javascript.
 
-Here is a link to the deployed weather app: [weather dashboard](file:///C:/Users/yagol/OneDrive/%C3%81rea%20de%20Trabalho/assignments/modulo6/index.html)
+Here is a link to the deployed weather app: [weather dashboard] (file:///C:/Users/yagol/OneDrive/%C3%81rea%20de%20Trabalho/assignments/modulo6/index.html)
 
 ## Installation
 
